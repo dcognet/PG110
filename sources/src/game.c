@@ -4,7 +4,6 @@
  ******************************************************************************/
 #include <assert.h>
 #include <time.h>
-
 #include <game.h>
 #include <misc.h>
 #include <window.h>
@@ -15,6 +14,7 @@ struct game {
 	short max_levels;        // nb maps of the game
 	short current_level;
 	struct player* player;
+	struct bomb* bomb;
 };
 
 struct game*
@@ -26,7 +26,7 @@ game_new(void) {
 	game->maps[0] = map_get_static();
 	game->max_levels = 1;
 	game->current_level = 0;
-
+	game->bomb=malloc(5*sizeof(int)); /// bomb
 	game->player = player_init(1);
 	// Set default location of the player
 	player_set_position(game->player, 1, 0);
@@ -91,8 +91,9 @@ void game_display(struct game* game) {
 
 	game_banner_display(game);
 	map_display(game_get_current_map(game));
-	player_display(game->player);
-
+	player_display(game_get_player(game));
+	//explosion(game->player); /////bomb
+	player_put_bomb(game->player,game_get_current_map(game),game->bomb,game);//bomb
 	window_refresh();
 }
 
@@ -126,6 +127,7 @@ static short input_keyboard(struct game* game) {
 				player_move(player, map);
 				break;
 			case SDLK_SPACE:
+				player_bomb_init(player,game->bomb);
 				break;
 			default:
 				break;

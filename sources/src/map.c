@@ -7,14 +7,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-
+#include <unistd.h>
 #include <map.h>
 #include <constant.h>
 #include <misc.h>
 #include <sprite.h>
 #include <window.h>
 
-struct map {
+int dif_time;
+
+struct map {                 // structure qui def la map
 	int width;
 	int height;
 	unsigned char* grid;
@@ -50,6 +52,9 @@ struct map* map_new(int width, int height)
 int map_is_inside(struct map* map, int x, int y)
 {
 	assert(map);
+	if (x==-1 || x==map->width || y==-1 || y==map->height)    //ne sort plus de la map
+			return 0;
+
 	return 1;
 }
 
@@ -76,13 +81,16 @@ int map_get_height(struct map* map)
 enum cell_type map_get_cell_type(struct map* map, int x, int y)
 {
 	assert(map && map_is_inside(map, x, y));
-	return map->grid[CELL(x,y)] & 0xf0;
+	return map->grid[CELL(x,y)] & 0xf0;   //Oxf0=1111 0000
 }
 
 void map_set_cell_type(struct map* map, int x, int y, enum cell_type type)
 {
 	assert(map && map_is_inside(map, x, y));
-	map->grid[CELL(x,y)] = type;
+	if (type==112)
+		map->grid[CELL(x,y)] = (type | 0x03);
+	else
+		map->grid[CELL(x,y)] = type;
 }
 
 void display_bonus(struct map* map, int x, int y, unsigned char type)
@@ -120,6 +128,10 @@ void display_scenery(struct map* map, int x, int  y, unsigned char type)
 	}
 }
 
+
+
+
+
 void map_display(struct map* map)
 {
 	assert(map != NULL);
@@ -132,7 +144,7 @@ void map_display(struct map* map)
 	    y = j * SIZE_BLOC;
 
 	    unsigned char type = map->grid[CELL(i,j)];
-	    
+
 	    switch (type & 0xf0) {
 		case CELL_SCENERY:
 		  display_scenery(map, x, y, type);
@@ -150,14 +162,37 @@ void map_display(struct map* map)
 	      // pas de gestion du type de porte
 	      window_display_image(sprite_get_door_opened(), x, y);
 	      break;
+	    case CELL_BOMB:
+	    	/*if ((type & 0x0f)==3){
+	    		explosion(map,x,y,3,type);
+
+	    		//type=type & 0xf0;
+
+	    	}
+	    	if ((type  & 0x0f)==2)
+	    		explosion(map,x,y,2,type);
+	    	if ((type & 0x0f)==1)
+	    		explosion(map,x,y,1,type);
+	    	if ((type & 0x0f)==0)
+	    		explosion(map,x,y,0,type);*/
+
+
+	      break;
 	    }
 	  }
 	}
 }
 
+
+
+
+
+
 struct map* map_get_static(void)
 {
 	struct map* map = map_new(STATIC_MAP_WIDTH, STATIC_MAP_HEIGHT);
+
+	// a mettre dans un fichier texte : monde 0
 
 	unsigned char themap[STATIC_MAP_WIDTH * STATIC_MAP_HEIGHT] = {
 	  CELL_EMPTY, CELL_EMPTY, CELL_EMPTY, CELL_EMPTY, CELL_EMPTY, CELL_EMPTY, CELL_EMPTY, CELL_EMPTY, CELL_EMPTY, CELL_EMPTY, CELL_EMPTY, CELL_EMPTY,

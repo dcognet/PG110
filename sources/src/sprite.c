@@ -8,6 +8,7 @@
 #include <sprite.h>
 #include <misc.h>
 
+
 // Sprites general
 #define MAP_CASE        "sprite/wood_box.png"
 #define MAP_KEY			"sprite/key.png"
@@ -52,6 +53,9 @@
 #define PLAYER_RIGHT    "sprite/player_right.png"
 #define PLAYER_DOWN     "sprite/player_down.png"
 
+//Sprites of Explosion
+#define EXPLOSION "sprite/explosion.png"
+
 // banner
 SDL_Surface* numbers[10];
 SDL_Surface* banner_life;
@@ -68,12 +72,33 @@ SDL_Surface* door_closed;
 SDL_Surface* stone;
 SDL_Surface* tree;
 
+//bomb
+SDL_Surface* bomb_1;
+SDL_Surface* bomb_2;
+SDL_Surface* bomb_3;
+SDL_Surface* bomb_4;
+
+
 // bonus
 #define NB_BONUS 4
 SDL_Surface* bonus[NB_BONUS + 1];
 
 // player
 SDL_Surface* player_img[4];
+
+static void bomb_load(){
+	bomb_1=load_image(BOMB_TTL1);
+	bomb_2=load_image(BOMB_TTL2);
+	bomb_3=load_image(BOMB_TTL3);
+	bomb_4=load_image(BOMB_TTL4);
+}
+
+static void bomb_unload() {
+	SDL_FreeSurface(bomb_1);
+	SDL_FreeSurface(bomb_2);
+	SDL_FreeSurface(bomb_3);
+	SDL_FreeSurface(bomb_4);
+}
 
 static void banner_load() {
 	// numbers imgs
@@ -116,6 +141,7 @@ static void map_load() {
 	stone = load_image(MAP_STONE);
 	door_opened = load_image(MAP_DOOR_OPENED);
 	door_closed = load_image(MAP_DOOR_CLOSED);
+
 }
 
 static void map_unload() {
@@ -159,6 +185,7 @@ void sprite_load() {
 	bonus_load();
 	banner_load();
 	player_load();
+	bomb_load();
 }
 
 void sprite_free() {
@@ -166,6 +193,7 @@ void sprite_free() {
 	bonus_unload();
 	banner_unload();
 	player_unload();
+	bomb_unload();
 }
 
 SDL_Surface* sprite_get_number(short number) {
@@ -231,4 +259,25 @@ SDL_Surface* sprite_get_door_opened() {
 SDL_Surface* sprite_get_door_closed() {
 	assert(door_closed);
 	return door_closed;
+}
+
+
+SDL_Surface* sprite_get_bomb_1() {
+	assert(bomb_1);
+	return bomb_1;
+}
+
+SDL_Surface* sprite_get_bomb_2() {
+	assert(bomb_2);
+	return bomb_2;
+}
+
+SDL_Surface* sprite_get_bomb_3() {
+	assert(bomb_3);
+	return bomb_3;
+}
+
+SDL_Surface* sprite_get_bomb_4() {
+	assert(bomb_4);
+	return bomb_4;
 }
